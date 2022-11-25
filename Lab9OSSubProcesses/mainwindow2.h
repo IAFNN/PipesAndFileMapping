@@ -25,6 +25,7 @@ public:
     void vote();
     void log(const std::string& text);
     void setNumberOfIdeas(int numberOfIdeas);
+    void printMsg(std::string tmpString);
 private:
     Ui::MainWindow2 *ui;
     HANDLE pipe;

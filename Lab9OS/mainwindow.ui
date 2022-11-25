@@ -204,7 +204,7 @@
     </property>
     <property name="font">
      <font>
-      <family>MS UI Gothic</family>
+      <family>Arial</family>
       <pointsize>24</pointsize>
      </font>
     </property>
@@ -215,19 +215,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>0</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TEST</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -235,7 +222,7 @@
      <x>0</x>
      <y>0</y>
      <width>712</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

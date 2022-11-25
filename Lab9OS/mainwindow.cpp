@@ -121,7 +121,7 @@ void MainWindow::startProcesses() {
 }
 void MainWindow::wait3MinutesAndBeginVote() {
     Sleep(THREE_MINUTES_IN_MILLIS);
-    printMsg("Ideas generating has finished");
+    printMsg("Ideas generating has finished\n---------------------------------------------");
     for(std::pair<_PROCESS_INFORMATION, HANDLE> process : processes){
         writeToPipe(process.second, L"1");
     }
@@ -138,6 +138,7 @@ void MainWindow::voteOnCurrentIdea() {
     printIdea((ideas[currentIdea]).first, (ideas[currentIdea]).second, currentIdea + 1);
     for(std::pair<_PROCESS_INFORMATION, HANDLE> process : processes){
         std::wstring messageToWrite(std::wstring(ideas[currentIdea].first.begin(), ideas[currentIdea].first.end()) + L"\nStudent #" + std::to_wstring(ideas[currentIdea].second));
+        std::string temp(messageToWrite.begin(), messageToWrite.end());
         writeToPipe(process.second, messageToWrite.c_str());
     }
     votesForIdeas.emplace_back(std::pair(ideas[currentIdea], 0));
@@ -158,6 +159,7 @@ void MainWindow::nextIdea() {
         return;
     }
     setColourDefault();
+    QCoreApplication::processEvents();
     currentIdea++;
     voteOnCurrentIdea();
 }
@@ -239,18 +241,6 @@ void MainWindow::printMsg(std::string tmpString)
     ui->textEdit->append(QString::fromStdString(tmpString));
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    printIdea("Drink coffee", 10, 1);
-    printVotingResults(15);
-    printMsg("Idea N1 has won the voting");
-    for(int i = 0; i < mode-1; i++)
-    {
-        buttonStateChanged(true, i);
-    }
-    buttonStateChanged(false, mode-1);
-}
-
 void MainWindow::writeToPipe(HANDLE pipe, const wchar_t* data) {
     DWORD bytesWritten = 0;
     WriteFile(
@@ -286,6 +276,8 @@ void MainWindow::beginVoting() {
                            atoi(currentIdea.substr(currentIdea.find("ID") + 2, currentIdea.length() - delimiterIndex - 2).c_str()));
         printMsg(ideas[ideas.size() - 1].first + "\nStudent #" + std::to_string(ideas[ideas.size() - 1].second) + "\n");
     }
+    QCoreApplication::processEvents();
+    printMsg("---------------------------------------------\n");
     for(std::pair<_PROCESS_INFORMATION, HANDLE> process : processes){
         writeToPipe(process.second, std::to_wstring(ideas.size()).c_str());
     }
@@ -303,8 +295,10 @@ void MainWindow::findTop3Ideas() {
     std::sort(votesForIdeas.begin(), votesForIdeas.end(), [](const std::pair<std::pair<std::string, int>, int>& first, const std::pair<std::pair<std::string, int>, int>& second){
         return first.second > second.second;
     });
-    votesForIdeas.erase(votesForIdeas.begin() + 3, votesForIdeas.end());
-    printMsg("Top 3 ideas are :\n");
+    if(votesForIdeas.size() > 3) {
+        votesForIdeas.erase(votesForIdeas.begin() + 3, votesForIdeas.end());
+    }
+    printMsg("---------------------------------------------\nTop 3 ideas are :\n");
     std::ofstream ofstream("ideasResult.txt");
     for(const std::pair<std::pair<std::string, int>, int>& idea : votesForIdeas){
         std::string result(idea.first.first + " from student #" + std::to_string(idea.first.second) + "\nwith " + std::to_string(idea.second) + " votes\n");

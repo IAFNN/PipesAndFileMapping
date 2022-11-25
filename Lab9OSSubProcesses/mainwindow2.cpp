@@ -92,6 +92,9 @@ std::wstring MainWindow2::readFromPipe() {
             &bytesRead,
             nullptr
     );
+    log(std::to_string(bytesRead));
+    log(std::to_string(bytesRead / sizeof(wchar_t)));
+    buffer[bytesRead / sizeof(wchar_t )] = '\0';
     return std::wstring(buffer);
 }
 
@@ -131,7 +134,7 @@ void MainWindow2::onbProcessVoteYes_clicked()
         this->close();
     }else{
         std::wstring messageToDisplay = readFromPipe();
-        log(std::string(messageToDisplay.begin(), messageToDisplay.end() - 1));
+        printMsg(std::string(messageToDisplay.begin(), messageToDisplay.end()));
         setColourDefault();
     }
 }
@@ -146,7 +149,7 @@ void MainWindow2::onbProcessVoteNo_clicked()
         this->close();
     }else{
         std::wstring messageToDisplay = readFromPipe();
-        log(std::string(messageToDisplay.begin(), messageToDisplay.end()));
+        printMsg(std::string(messageToDisplay.begin(), messageToDisplay.end()));
         setColourDefault();
     }
 }
@@ -161,10 +164,15 @@ void MainWindow2::setColourDefault()
 
 void MainWindow2::vote() {
     std::wstring messageToDisplay = readFromPipe();
-    log(std::string(messageToDisplay.begin(), messageToDisplay.end()));
+    printMsg(std::string(messageToDisplay.begin(), messageToDisplay.end()));
     setColourDefault();
 }
 
 void MainWindow2::setNumberOfIdeas(int numberOfIdeas) {
     this->numberOfIdeas = numberOfIdeas;
+}
+void MainWindow2::printMsg(std::string tmpString)
+{
+    log(tmpString);
+    ui->textEdit->append(QString::fromStdString(tmpString));
 }
